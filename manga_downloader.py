@@ -2,7 +2,6 @@ import argparse
 import logging
 
 from manga_provider.mangahost import MangaHost
-from util.utils import format_manga
 
 
 logger = logging.getLogger('manga_downloader')
@@ -34,4 +33,12 @@ if __name__ == '__main__':
 
     # Testing
     for manga in provider.find_mangas(args.manga):
-        format_manga(manga)
+        manga.show()
+        chapters = provider.find_manga_chapters(manga)
+
+        max_size = len(str(len(chapters)))
+        int_format = f':0{max_size}d'
+        for index, elem in enumerate(chapters, 1):
+            print(('{' + int_format + '} - ' + '{}').format(index, elem))
+
+        break

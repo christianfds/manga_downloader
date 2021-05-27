@@ -3,18 +3,17 @@ import requests
 import logging
 
 import typing
+from util.manga import Manga
 
 logger = logging.getLogger('manga_downloader.manga_provider.generic')
 
 
 class MangaProvider(abc.ABC):
 
-    def __init__(self, base_url: str, find_path: str, search_regex: str, chapter_link_regex: str, img_link_regex: str) -> None:
+    def __init__(self, base_url: str, find_path: str, manga_chapters_path: str) -> None:
         self.base_url = base_url
         self.find_path = find_path
-        self.search_link_regex = search_regex
-        self.chapter_link_regex = chapter_link_regex
-        self.img_link_regex = img_link_regex
+        self.manga_chapters_path = manga_chapters_path
 
     def perform_request(self, url: str) -> requests.Response:
         logger.debug(f'Sending request to {url}')
@@ -43,6 +42,6 @@ class MangaProvider(abc.ABC):
     def find_mangas(self, manga_name: str) -> typing.Iterable[dict]:
         pass
 
-    # @abc.abstractclassmethod
-    # def find_manga_chapters(self):
-    #     pass
+    @abc.abstractclassmethod
+    def find_manga_chapters(self, manga: Manga):
+        pass
