@@ -11,7 +11,8 @@ logger = logging.getLogger('manga_downloader.manga_provider.mangahost')
 SETTINGS = {
     'base_url': 'https://mangahost4.com',
     'find_path': 'find',
-    'manga_chapters_path': 'manga',
+    'manga_path': 'manga',
+    'manga_chapter_path': 'manga'
 }
 
 
@@ -53,7 +54,7 @@ class MangaHost(MangaProvider):
             counter = counter + 1
 
     def find_manga_chapters(self, manga: Manga) -> typing.List[str]:
-        search = '/'.join([self.base_url, self.manga_chapters_path, manga.manga_id])
+        search = '/'.join([self.base_url, self.manga_path, manga.manga_id])
 
         request_result = self.perform_request(search)
         soup = BeautifulSoup(request_result.content, features='html.parser')
@@ -83,3 +84,14 @@ class MangaHost(MangaProvider):
         logger.debug(all_chapters)
 
         return all_chapters
+
+    def find_chapter_pages(self, manga: Manga, chapter: str) -> typing.List[str]:
+        search = '/'.join([self.base_url, self.manga_chapter_path, manga.manga_id, chapter])
+
+        request_result = self.perform_request(search)
+        soup = BeautifulSoup(request_result.content, features='html.parser')
+
+        options = soup.find('select', {'class': 'select-page'}).findAll('option')
+        pages = [p['value'] for p in options]
+
+        logger.info(pages)

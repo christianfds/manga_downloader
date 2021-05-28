@@ -10,10 +10,11 @@ logger = logging.getLogger('manga_downloader.manga_provider.generic')
 
 class MangaProvider(abc.ABC):
 
-    def __init__(self, base_url: str, find_path: str, manga_chapters_path: str) -> None:
+    def __init__(self, base_url: str, find_path: str, manga_path: str, manga_chapter_path: str) -> None:
         self.base_url = base_url
         self.find_path = find_path
-        self.manga_chapters_path = manga_chapters_path
+        self.manga_path = manga_path
+        self.manga_chapter_path = manga_chapter_path
 
     def perform_request(self, url: str) -> requests.Response:
         logger.debug(f'Sending request to {url}')
@@ -23,7 +24,6 @@ class MangaProvider(abc.ABC):
 
         logger.debug(f'Request result:')
         logger.debug(response)
-        logger.debug(response.content)
         return response
 
     # @abc.abstractclassmethod
