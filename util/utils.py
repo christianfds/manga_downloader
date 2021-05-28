@@ -10,3 +10,10 @@ class FormatText():
     @staticmethod
     def description(text: str) -> str:
         return colored(text=text, color='white', attrs=['dark'])
+
+
+def dynamic_pad(list_len: int, number: int) -> str:
+    max_size = len(str(list_len))
+    int_format = f':0{max_size}d'
+
+    return (''.join(['{', int_format, '}'])).format(number)

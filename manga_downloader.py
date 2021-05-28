@@ -40,7 +40,7 @@ if __name__ == '__main__':
         int_format = f':0{max_size}d'
         for index, elem in enumerate(chapters, 1):
             print(('{' + int_format + '} - ' + '{}').format(index, elem))
-            provider.find_chapter_pages(manga, elem)
+            provider.download_chapter(manga, elem)
             break
 
         break

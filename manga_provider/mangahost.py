@@ -20,6 +20,20 @@ class MangaHost(MangaProvider):
     def __init__(self) -> None:
         super().__init__(**SETTINGS)
 
+    def get_headers(self) -> dict:
+        return {
+            "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0"
+        }
+
+    def download_chapter(self, manga: Manga, manga_chapter: str):
+        list_imgs = self.find_chapter_pages(manga, manga_chapter)
+
+        path = '/'.join([manga.title, manga_chapter])
+
+        downloaded_paths = self.download_all_images(list_imgs, path)
+
+        return downloaded_paths
+
     @staticmethod
     def encode_manga_name(manga_name: str) -> str:
         return manga_name.replace(' ', '+')
@@ -91,7 +105,9 @@ class MangaHost(MangaProvider):
         request_result = self.perform_request(search)
         soup = BeautifulSoup(request_result.content, features='html.parser')
 
-        options = soup.find('select', {'class': 'select-page'}).findAll('option')
-        pages = [p['value'] for p in options]
+        imgs = soup.find('div', {'id': 'slider'}).findAll('img')
+        pages = [p['src'] for p in imgs]
 
-        logger.info(pages)
+        logger.debug(pages)
+
+        return pages
