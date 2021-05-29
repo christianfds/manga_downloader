@@ -61,11 +61,11 @@ if __name__ == '__main__':
         manga.show()
         response = None
         while response not in ('S', 'N'):
-            response = input(FormatText.option('Deseja baixar este manga? S/N  '))
+            response = input(FormatText.option('Deseja baixar este manga? S/N  ')).upper()
 
-        if response.upper() == 'N':
+        if response == 'N':
             continue
-        elif response.upper() == 'S':
+        elif response == 'S':
             chosen_manga = manga
             break
 
