@@ -27,10 +27,9 @@ class MangaHost(MangaProvider):
         }
 
     def download_chapter(self, manga: Manga, manga_chapter: str) -> typing.Tuple[str, typing.List[str]]:
-        print(f'Buscando paginas do capitulo {manga_chapter}')
         list_imgs = self.find_chapter_pages(manga, manga_chapter)
 
-        folder_path = os.path.join('.tmp', manga.title, manga_chapter)
+        folder_path = os.path.join('.tmp', manga.title, f'{manga.title} - Capitulo #{manga_chapter}')
 
         print(f'Baixando capitulo {manga_chapter}')
         downloaded_paths = self.download_all_images(list_imgs, folder_path)
