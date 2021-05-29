@@ -4,8 +4,8 @@ import shutil
 import typing
 from util.manga import Manga
 
-from util.utils import FormatText, dynamic_pad
 from util.pdf import PdfUtils
+from util.utils import FormatText, dynamic_pad, clear_tmp
 from manga_provider.mangahost import MangaHost
 
 
@@ -74,6 +74,8 @@ def move_to_output(path: str, output: str):
 
 
 def manga_downloader(args: dict):
+    clear_tmp()
+
     provider = MangaHost()
 
     manga = chose_manga(provider, args.manga)
@@ -90,6 +92,8 @@ def manga_downloader(args: dict):
 
     for f in results:
         move_to_output(f, args.output)
+
+    clear_tmp()
 
 
 if __name__ == '__main__':
