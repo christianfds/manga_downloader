@@ -1,3 +1,4 @@
+import os
 import logging
 import typing
 
@@ -25,11 +26,11 @@ class MangaHost(MangaProvider):
             "User-Agent": "Mozilla/5.0 (X11; Linux x86_64; rv:76.0) Gecko/20100101 Firefox/76.0"
         }
 
-    def download_chapter(self, manga: Manga, manga_chapter: str):
+    def download_chapter(self, manga: Manga, manga_chapter: str) -> typing.Tuple[str, typing.List[str]]:
         print(f'Buscando paginas do capitulo {manga_chapter}')
         list_imgs = self.find_chapter_pages(manga, manga_chapter)
 
-        path = '/'.join([manga.title, manga_chapter])
+        path = os.path.join('.tmp', manga.title, manga_chapter)
 
         print(f'Baixando capitulo {manga_chapter}')
         downloaded_paths = self.download_all_images(list_imgs, path)

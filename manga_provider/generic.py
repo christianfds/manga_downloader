@@ -67,10 +67,9 @@ class MangaProvider(abc.ABC):
 
         file_format = uri.split('.')[-1]
         file_name = f'{file_name}.{file_format}'
-        tmp_save_path = os.path.join('.tmp/', save_path)
-        file_path = os.path.join(tmp_save_path, file_name)
+        file_path = os.path.join(save_path, file_name)
 
-        os.makedirs(tmp_save_path, exist_ok=True)
+        os.makedirs(save_path, exist_ok=True)
 
         logging.debug(f'Downloading {uri}')
         r = requests.get(uri, headers=self.get_headers(), stream=True)
