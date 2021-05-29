@@ -5,11 +5,14 @@ import requests
 import logging
 import multiprocessing
 import tqdm
+import http.client
 
 import typing
 from util.manga import Manga
 from util.utils import dynamic_pad
 
+# Fix issue when downloading a lot of chapters
+http.client._MAXHEADERS = 100000
 logger = logging.getLogger('manga_downloader.manga_provider')
 
 
