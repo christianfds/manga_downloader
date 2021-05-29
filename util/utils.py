@@ -11,6 +11,10 @@ class FormatText():
     def description(text: str) -> str:
         return colored(text=text, color='white', attrs=['dark'])
 
+    @staticmethod
+    def option(text: str) -> str:
+        return colored(text=text, color='magenta')
+
 
 def dynamic_pad(list_len: int, number: int) -> str:
     max_size = len(str(list_len))
