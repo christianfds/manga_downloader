@@ -8,6 +8,7 @@ import tqdm
 
 import typing
 from util.manga import Manga
+from util.utils import dynamic_pad
 
 logger = logging.getLogger('manga_downloader.manga_provider')
 
@@ -49,7 +50,7 @@ class MangaProvider(abc.ABC):
             inputs = list(zip(
                 uri_list,
                 [save_path] * len(uri_list),
-                range(len(uri_list))
+                [dynamic_pad(len(uri_list), num) for num in range(len(uri_list))],
             ))
             results = list(
                 tqdm.tqdm(
@@ -61,13 +62,12 @@ class MangaProvider(abc.ABC):
 
         return results
 
-    def download_image(self, merda: tuple) -> str:
-        uri, save_path, file_name = merda
+    def download_image(self, params: tuple) -> str:
+        uri, save_path, file_name = params
 
         file_format = uri.split('.')[-1]
         file_name = f'{file_name}.{file_format}'
-        # TODO dynamic tmp folder based on OS
-        tmp_save_path = os.path.join('/tmp/', save_path)
+        tmp_save_path = os.path.join('.tmp/', save_path)
         file_path = os.path.join(tmp_save_path, file_name)
 
         os.makedirs(tmp_save_path, exist_ok=True)

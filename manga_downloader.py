@@ -2,7 +2,7 @@ import argparse
 import logging
 import typing
 
-from util.utils import FormatText
+from util.utils import FormatText, dynamic_pad
 from manga_provider.mangahost import MangaHost
 
 
@@ -70,10 +70,8 @@ if __name__ == '__main__':
 
     chapters = provider.find_manga_chapters(manga)
 
-    max_size = len(str(len(chapters)))
-    int_format = f':0{max_size}d'
     for index, elem in enumerate(chapters, 1):
-        print(('{' + int_format + '} - Capítulo #{}').format(index, elem))
+        print(('{} - Capítulo #{}').format(dynamic_pad(len(chapters), index), elem))
 
     response = input(FormatText.option('Quais indices deseja baixar?  '))
     selected_chapters = parse_chapter_selection(response)
