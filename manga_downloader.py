@@ -1,5 +1,6 @@
 import argparse
 import logging
+import shutil
 import typing
 from util.manga import Manga
 
@@ -29,9 +30,9 @@ def parse_chapter_selection(selection: str) -> typing.List[int]:
     return chapters
 
 
-def chose_manga(provider: MangaHost):
+def chose_manga(provider: MangaHost, manga_name: str):
     chosen_manga = None
-    for manga in provider.find_mangas(args.manga):
+    for manga in provider.find_mangas(manga_name):
         manga.show()
         response = None
         while response not in ('S', 'N'):
@@ -68,17 +69,27 @@ def download_chapters(provider: MangaHost, manga: Manga, selected_chapters, chap
     return all_folders
 
 
+def move_to_output(path: str, output: str):
+    print(shutil.move(path, output))
+
+
 def manga_downloader(args: dict):
     provider = MangaHost()
 
-    manga = chose_manga(provider)
+    manga = chose_manga(provider, args.manga)
 
     selected_chapters, chapters = select_chapters(provider, manga)
 
     all_folders = download_chapters(provider, manga, selected_chapters, chapters)
 
     if not args.image:
-        _ = PdfUtils.convert_multiple_folders_to_pdf(all_folders)
+        result_pdfs = PdfUtils.convert_multiple_folders_to_pdf(all_folders)
+        results = result_pdfs
+    else:
+        results = all_folders
+
+    for f in results:
+        move_to_output(f, args.output)
 
 
 if __name__ == '__main__':

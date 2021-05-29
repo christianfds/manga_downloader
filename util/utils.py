@@ -1,3 +1,4 @@
+import shutil
 from termcolor import colored
 
 
@@ -21,3 +22,7 @@ def dynamic_pad(list_len: int, number: int) -> str:
     int_format = f':0{max_size}d'
 
     return (''.join(['{', int_format, '}'])).format(number)
+
+
+def clear_tmp():
+    shutil.rmtree('./.tmp')
