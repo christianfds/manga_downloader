@@ -3,6 +3,7 @@ import logging
 import typing
 
 from util.utils import FormatText, dynamic_pad
+from util.pdf import PdfUtils
 from manga_provider.mangahost import MangaHost
 
 
@@ -37,6 +38,10 @@ if __name__ == '__main__':
         '-o', '--output',
         required=True,
         help='Output folder.')
+    parser.add_argument(
+        '--image',
+        action='store_true',
+        help='Store downloaded chapter as images.')
     parser.add_argument(
         '--debug',
         action='store_true',
@@ -76,5 +81,10 @@ if __name__ == '__main__':
     response = input(FormatText.option('Quais indices deseja baixar?  '))
     selected_chapters = parse_chapter_selection(response)
 
+    all_folders = []
     for chapter in selected_chapters:
-        provider.download_chapter(manga, chapters[chapter - 1])
+        folder, _ = provider.download_chapter(manga, chapters[chapter - 1])
+        all_folders.append(folder)
+
+    if not args.image:
+        result_files = PdfUtils.convert_multiple_folders_to_pdf(all_folders)

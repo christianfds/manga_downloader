@@ -30,12 +30,12 @@ class MangaHost(MangaProvider):
         print(f'Buscando paginas do capitulo {manga_chapter}')
         list_imgs = self.find_chapter_pages(manga, manga_chapter)
 
-        path = os.path.join('.tmp', manga.title, manga_chapter)
+        folder_path = os.path.join('.tmp', manga.title, manga_chapter)
 
         print(f'Baixando capitulo {manga_chapter}')
-        downloaded_paths = self.download_all_images(list_imgs, path)
+        downloaded_paths = self.download_all_images(list_imgs, folder_path)
 
-        return downloaded_paths
+        return folder_path, downloaded_paths
 
     @staticmethod
     def encode_manga_name(manga_name: str) -> str:

@@ -42,7 +42,7 @@ class MangaProvider(abc.ABC):
     #     pass
 
     @abc.abstractclassmethod
-    def download_chapter(self):
+    def download_chapter(self, manga: Manga, manga_chapter: str) -> typing.Tuple[str, typing.List[str]]:
         pass
 
     def download_all_images(self, uri_list: typing.List[str], save_path: str) -> typing.List[str]:
