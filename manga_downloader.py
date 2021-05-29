@@ -24,6 +24,8 @@ def parse_chapter_selection(selection: str) -> typing.List[int]:
         elif len(section_range) == 1:
             chapters = chapters + [int(section_range[0])]
 
+    return chapters
+
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='manga_downloader')
@@ -49,6 +51,7 @@ if __name__ == '__main__':
 
     provider = MangaHost()
 
+    chosen_manga = None
     for manga in provider.find_mangas(args.manga):
         manga.show()
         response = None
@@ -57,14 +60,23 @@ if __name__ == '__main__':
 
         if response.upper() == 'N':
             continue
+        elif response.upper() == 'S':
+            chosen_manga = manga
+            break
 
-        chapters = provider.find_manga_chapters(manga)
+    if chosen_manga is None:
+        print("O seu manga desejado não foi encontrado")
+        quit(0)
 
-        max_size = len(str(len(chapters)))
-        int_format = f':0{max_size}d'
-        for index, elem in enumerate(chapters, 1):
-            print(('{' + int_format + '} - Capítulo #{}').format(index, elem))
+    chapters = provider.find_manga_chapters(manga)
 
-        response = input(FormatText.option('Quais indices deseja baixar?  '))
-        print(parse_chapter_selection(response))
-        # provider.download_chapter(manga, elem)
+    max_size = len(str(len(chapters)))
+    int_format = f':0{max_size}d'
+    for index, elem in enumerate(chapters, 1):
+        print(('{' + int_format + '} - Capítulo #{}').format(index, elem))
+
+    response = input(FormatText.option('Quais indices deseja baixar?  '))
+    selected_chapters = parse_chapter_selection(response)
+
+    for chapter in selected_chapters:
+        provider.download_chapter(manga, chapters[chapter - 1])
