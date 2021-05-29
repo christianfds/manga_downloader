@@ -1,6 +1,8 @@
 import argparse
 import logging
+import typing
 
+from util.utils import FormatText
 from manga_provider.mangahost import MangaHost
 
 
@@ -11,12 +13,28 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
+def parse_chapter_selection(selection: str) -> typing.List[int]:
+    chapters = []
+    for section in selection.split(','):
+        section_range = section.split('-')
+        if len(section_range) > 2:
+            raise IndexError(f'Range invalido: {section}')
+        elif len(section_range) == 2:
+            chapters = chapters + list(range(int(section_range[0]), int(section_range[1]) + 1))
+        elif len(section_range) == 1:
+            chapters = chapters + [int(section_range[0])]
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(prog='manga_downloader')
     parser.add_argument(
-        '--manga',
+        '-m', '--manga',
         required=True,
         help='Manga to be downloaded.')
+    parser.add_argument(
+        '-o', '--output',
+        required=True,
+        help='Output folder.')
     parser.add_argument(
         '--debug',
         action='store_true',
@@ -31,16 +49,22 @@ if __name__ == '__main__':
 
     provider = MangaHost()
 
-    # Testing
     for manga in provider.find_mangas(args.manga):
         manga.show()
+        response = None
+        while response not in ('S', 'N'):
+            response = input(FormatText.option('Deseja baixar este manga? S/N  '))
+
+        if response.upper() == 'N':
+            continue
+
         chapters = provider.find_manga_chapters(manga)
 
         max_size = len(str(len(chapters)))
         int_format = f':0{max_size}d'
         for index, elem in enumerate(chapters, 1):
-            print(('{' + int_format + '} - ' + '{}').format(index, elem))
-            provider.download_chapter(manga, elem)
-            break
+            print(('{' + int_format + '} - Capítulo #{}').format(index, elem))
 
-        break
+        response = input(FormatText.option('Quais indices deseja baixar?  '))
+        print(parse_chapter_selection(response))
+        # provider.download_chapter(manga, elem)
