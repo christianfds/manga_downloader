@@ -70,7 +70,7 @@ def download_chapters(provider: MangaHost, manga: Manga, selected_chapters, chap
 
 
 def move_to_output(path: str, output: str):
-    print(shutil.move(path, output))
+    shutil.move(path, output)
 
 
 def manga_downloader(args: dict):
@@ -82,6 +82,7 @@ def manga_downloader(args: dict):
 
     selected_chapters, chapters = select_chapters(provider, manga)
 
+    # TODO Run all operations below atomic for each chapter
     all_folders = download_chapters(provider, manga, selected_chapters, chapters)
 
     if not args.image:
