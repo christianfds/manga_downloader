@@ -54,7 +54,7 @@ class MangaProvider(abc.ABC):
             ))
             results = list(
                 tqdm.tqdm(
-                    pool.imap(self.download_image, inputs),
+                    pool.imap(self._multiproc_intermediary_to_download_image, inputs),
                     total=len(inputs),
                     unit='Image',
                 )
@@ -62,9 +62,10 @@ class MangaProvider(abc.ABC):
 
         return results
 
-    def download_image(self, params: tuple) -> str:
-        uri, save_path, file_name = params
+    def _multiproc_intermediary_to_download_image(self, params: tuple):
+        return self.download_image(params[0], params[1], params[2])
 
+    def download_image(self, uri: str, save_path: str, file_name: str) -> str:
         file_format = uri.split('.')[-1]
         file_name = f'{file_name}.{file_format}'
         file_path = os.path.join(save_path, file_name)

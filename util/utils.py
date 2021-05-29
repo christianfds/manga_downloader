@@ -25,4 +25,4 @@ def dynamic_pad(list_len: int, number: int) -> str:
 
 
 def clear_tmp():
-    shutil.rmtree('./.tmp')
+    shutil.rmtree('./.tmp', ignore_errors=True)
