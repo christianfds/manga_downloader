@@ -1,6 +1,7 @@
 import argparse
 import logging
 import shutil
+import os
 
 from manga_provider.mangahost import MangaHost
 from util.manga import Manga
@@ -70,6 +71,7 @@ def download_chapters(provider: MangaHost, manga: Manga, selected_chapters, chap
 
 
 def move_to_output(path: str, output: str):
+    os.makedirs(output, exist_ok=True)
     shutil.move(path, output)
 
 
