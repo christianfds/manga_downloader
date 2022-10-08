@@ -40,7 +40,7 @@ class PdfUtils:
     def convert_multiple_folders_to_pdf(
         folder_paths: typing.List[str], keep_original: bool = False
     ) -> typing.List[str]:
-        print("Convertendo para pdf")
+        print("Converting to PDF")
         with multiprocessing.Pool() as pool:
             inputs = list(zip(folder_paths, [keep_original] * len(folder_paths)))
             results = list(

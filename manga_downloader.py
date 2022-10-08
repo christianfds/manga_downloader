@@ -20,7 +20,7 @@ def parse_chapter_selection(selection: str) -> typing.List[int]:
     for section in selection.split(","):
         section_range = section.split("-")
         if len(section_range) > 2:
-            raise IndexError(f"Range invalido: {section}")
+            raise IndexError(f"Invalid range: {section}")
         elif len(section_range) == 2:
             chapters = chapters + list(
                 range(int(section_range[0]), int(section_range[1]) + 1)
@@ -36,19 +36,17 @@ def chose_manga(provider: MangaHost, manga_name: str):
     for manga in provider.find_mangas(manga_name):
         manga.show()
         response = None
-        while response not in ("S", "N"):
-            response = input(
-                FormatText.option("Deseja baixar este manga? S/N  ")
-            ).upper()
+        while response not in ("Y", "N"):
+            response = input(FormatText.option("Download this manga? Y/N  ")).upper()
 
         if response == "N":
             continue
-        elif response == "S":
+        elif response == "Y":
             chosen_manga = manga
             break
 
     if chosen_manga is None:
-        print("O seu manga desejado não foi encontrado")
+        print("Couldn't find this manga")
         quit(0)
     return manga
 
@@ -57,9 +55,9 @@ def select_chapters(provider: MangaHost, manga: Manga):
     chapters = provider.find_manga_chapters(manga)
 
     for index, elem in enumerate(chapters, 1):
-        print(("{} - Capítulo #{}").format(dynamic_pad(len(chapters), index), elem))
+        print(("{} - Chapter #{}").format(dynamic_pad(len(chapters), index), elem))
 
-    response = input(FormatText.option("Quais indices deseja baixar?  "))
+    response = input(FormatText.option("Which indexes to download?  "))
     selected_chapters = parse_chapter_selection(response)
     return selected_chapters, chapters
 

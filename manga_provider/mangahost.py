@@ -36,7 +36,7 @@ class MangaHost(MangaProvider):
             ".tmp", manga.title, f"{manga.title} - Capitulo #{manga_chapter}"
         )
 
-        print(f"Baixando capitulo {manga_chapter}")
+        print(f"Downloading chapter {manga_chapter}")
         downloaded_paths = self.download_all_images(list_imgs, folder_path)
 
         return folder_path, downloaded_paths
