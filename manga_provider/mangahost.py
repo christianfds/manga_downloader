@@ -29,7 +29,7 @@ class MangaHost(MangaProvider):
 
     def download_chapter(
         self, manga: Manga, manga_chapter: str
-    ) -> typing.Tuple[str, typing.List[str]]:
+    ) -> tuple[str, list[str]]:
         list_imgs = self.find_chapter_pages(manga, manga_chapter)
 
         folder_path = os.path.join(
@@ -78,7 +78,7 @@ class MangaHost(MangaProvider):
 
             counter = counter + 1
 
-    def find_manga_chapters(self, manga: Manga) -> typing.List[str]:
+    def find_manga_chapters(self, manga: Manga) -> list[str]:
         search = "/".join([self.base_url, self.manga_path, manga.manga_id])
 
         request_result = self.perform_request(search)
@@ -114,7 +114,7 @@ class MangaHost(MangaProvider):
 
         return all_chapters
 
-    def find_chapter_pages(self, manga: Manga, chapter: str) -> typing.List[str]:
+    def find_chapter_pages(self, manga: Manga, chapter: str) -> list[str]:
         search = "/".join(
             [self.base_url, self.manga_chapter_path, manga.manga_id, chapter]
         )

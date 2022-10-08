@@ -1,7 +1,6 @@
 import multiprocessing
 import os
 import shutil
-import typing
 
 import tqdm
 from PIL import Image
@@ -31,15 +30,13 @@ class PdfUtils:
         return pdf_path
 
     @staticmethod
-    def _multiproc_intermediary_to_convert_folder_to_pdf(
-        args: typing.Tuple[str, bool]
-    ) -> str:
+    def _multiproc_intermediary_to_convert_folder_to_pdf(args: tuple[str, bool]) -> str:
         return PdfUtils.convert_folder_to_pdf(args[0], args[1])
 
     @staticmethod
     def convert_multiple_folders_to_pdf(
-        folder_paths: typing.List[str], keep_original: bool = False
-    ) -> typing.List[str]:
+        folder_paths: list[str], keep_original: bool = False
+    ) -> list[str]:
         print("Converting to PDF")
         with multiprocessing.Pool() as pool:
             inputs = list(zip(folder_paths, [keep_original] * len(folder_paths)))

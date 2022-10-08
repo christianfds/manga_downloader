@@ -9,7 +9,7 @@ class Manga:
         title: str,
         link: str,
         description: str = "",
-        alternative_title: typing.Union[typing.List[str], str] = "",
+        alternative_title: typing.Union[list[str], str] = "",
         manga_id: str = "",
     ) -> None:
         self.title = title

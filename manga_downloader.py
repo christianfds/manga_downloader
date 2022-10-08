@@ -1,7 +1,6 @@
 import argparse
 import logging
 import shutil
-import typing
 
 from manga_provider.mangahost import MangaHost
 from util.manga import Manga
@@ -15,7 +14,7 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
-def parse_chapter_selection(selection: str) -> typing.List[int]:
+def parse_chapter_selection(selection: str) -> list[int]:
     chapters = []
     for section in selection.split(","):
         section_range = section.split("-")

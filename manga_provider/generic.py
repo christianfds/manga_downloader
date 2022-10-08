@@ -49,12 +49,10 @@ class MangaProvider(abc.ABC):
     @abc.abstractclassmethod
     def download_chapter(
         self, manga: Manga, manga_chapter: str
-    ) -> typing.Tuple[str, typing.List[str]]:
+    ) -> tuple[str, list[str]]:
         pass
 
-    def download_all_images(
-        self, uri_list: typing.List[str], save_path: str
-    ) -> typing.List[str]:
+    def download_all_images(self, uri_list: list[str], save_path: str) -> list[str]:
         with multiprocessing.Pool() as pool:
             inputs = list(
                 zip(
