@@ -1,0 +1,40 @@
+repos:
+-   repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v2.3.0
+    hooks:
+    -   id: check-yaml
+    -   id: end-of-file-fixer
+    -   id: trailing-whitespace
+
+# Applies code formatting
+-   repo: https://github.com/psf/black
+    rev: 21.12b0
+    hooks:
+    -   id: black
+        additional_dependencies: ['click==8.0.4']
+
+# Applies sort formatting
+-   repo: https://github.com/pycqa/isort
+    rev: 5.10.1
+    hooks:
+      - id: isort
+
+# Applies docformatting
+-   repo: https://github.com/myint/docformatter
+    rev: v1.4
+    hooks:
+    -   id: docformatter
+        args: ['-i', '--wrap-summaries=0']
+
+#Checks for doc styles
+-   repo: https://github.com/PyCQA/pydocstyle
+    rev: 6.1.1
+    hooks:
+    -   id: pydocstyle
+
+# Checks for code style
+-   repo: https://github.com/PyCQA/flake8
+    rev: 5.0.4
+    hooks:
+    -   id: flake8
+        additional_dependencies: ['flake8-bugbear', 'flake8-breakpoint']

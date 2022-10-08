@@ -1,19 +1,20 @@
-import os
 import abc
-import shutil
-import requests
+import http.client
 import logging
 import multiprocessing
-import tqdm
-import http.client
-
+import os
+import shutil
 import typing
+
+import requests
+import tqdm
+
 from util.manga import Manga
 from util.utils import dynamic_pad
 
 # Fix issue when downloading a lot of chapters
 http.client._MAXHEADERS = 100000
-logger = logging.getLogger('manga_downloader.manga_provider')
+logger = logging.getLogger("manga_downloader.manga_provider")
 
 
 class DownloadIssue(Exception):
@@ -21,18 +22,19 @@ class DownloadIssue(Exception):
 
 
 class MangaProvider(abc.ABC):
-
-    def __init__(self, base_url: str, find_path: str, manga_path: str, manga_chapter_path: str) -> None:
+    def __init__(
+        self, base_url: str, find_path: str, manga_path: str, manga_chapter_path: str
+    ) -> None:
         self.base_url = base_url
         self.find_path = find_path
         self.manga_path = manga_path
         self.manga_chapter_path = manga_chapter_path
 
     def perform_request(self, url: str) -> requests.Response:
-        logger.debug(f'Sending request to {url}')
+        logger.debug(f"Sending request to {url}")
         response = requests.get(url, headers=self.get_headers())
 
-        logger.debug(f'Request result:')
+        logger.debug("Request result:")
         logger.debug(response)
         return response
 
@@ -45,21 +47,27 @@ class MangaProvider(abc.ABC):
     #     pass
 
     @abc.abstractclassmethod
-    def download_chapter(self, manga: Manga, manga_chapter: str) -> typing.Tuple[str, typing.List[str]]:
+    def download_chapter(
+        self, manga: Manga, manga_chapter: str
+    ) -> typing.Tuple[str, typing.List[str]]:
         pass
 
-    def download_all_images(self, uri_list: typing.List[str], save_path: str) -> typing.List[str]:
+    def download_all_images(
+        self, uri_list: typing.List[str], save_path: str
+    ) -> typing.List[str]:
         with multiprocessing.Pool() as pool:
-            inputs = list(zip(
-                uri_list,
-                [save_path] * len(uri_list),
-                [dynamic_pad(len(uri_list), num) for num in range(len(uri_list))],
-            ))
+            inputs = list(
+                zip(
+                    uri_list,
+                    [save_path] * len(uri_list),
+                    [dynamic_pad(len(uri_list), num) for num in range(len(uri_list))],
+                )
+            )
             results = list(
                 tqdm.tqdm(
                     pool.imap(self._multiproc_intermediary_to_download_image, inputs),
                     total=len(inputs),
-                    unit='Image',
+                    unit="Image",
                 )
             )
 
@@ -69,13 +77,13 @@ class MangaProvider(abc.ABC):
         return self.download_image(params[0], params[1], params[2])
 
     def download_image(self, uri: str, save_path: str, file_name: str) -> str:
-        file_format = uri.split('.')[-1]
-        file_name = f'{file_name}.{file_format}'
+        file_format = uri.split(".")[-1]
+        file_name = f"{file_name}.{file_format}"
         file_path = os.path.join(save_path, file_name)
 
         os.makedirs(save_path, exist_ok=True)
 
-        logging.debug(f'Downloading {uri}')
+        logging.debug(f"Downloading {uri}")
         r = requests.get(uri, headers=self.get_headers(), stream=True)
 
         if r.status_code == 200:
@@ -83,13 +91,13 @@ class MangaProvider(abc.ABC):
             r.raw.decode_content = True
 
             # Open a local file with wb ( write binary ) permission.
-            with open(file_path, 'wb') as f:
+            with open(file_path, "wb") as f:
                 shutil.copyfileobj(r.raw, f)
 
             # Logging twice? but there is a single handler
-            logger.debug(f'Image sucessfully downloaded: {file_path}')
+            logger.debug(f"Image sucessfully downloaded: {file_path}")
         else:
-            raise DownloadIssue(f'Couldn\'t retrieve {uri}')
+            raise DownloadIssue(f"Couldn't retrieve {uri}")
 
         return file_path
 

@@ -1,13 +1,13 @@
+import multiprocessing
 import os
 import shutil
 import typing
-import multiprocessing
-import tqdm
 
+import tqdm
 from PIL import Image
 
 
-class PdfUtils():
+class PdfUtils:
     @staticmethod
     def convert_folder_to_pdf(folder_path: str, keep_original: bool = False) -> str:
         files_list = None
@@ -15,13 +15,13 @@ class PdfUtils():
             files_list = [os.path.join(root, name) for name in files]
             files_list.sort()
 
-        image_list = [Image.open(im).convert('RGB') for im in files_list]
+        image_list = [Image.open(im).convert("RGB") for im in files_list]
 
-        if folder_path.endswith('/'):
+        if folder_path.endswith("/"):
             pdf_path = folder_path[:-1]
         else:
             pdf_path = folder_path
-        pdf_path = f'{pdf_path}.pdf'
+        pdf_path = f"{pdf_path}.pdf"
 
         image_list[0].save(pdf_path, save_all=True, append_images=image_list[1:])
 
@@ -31,22 +31,26 @@ class PdfUtils():
         return pdf_path
 
     @staticmethod
-    def _multiproc_intermediary_to_convert_folder_to_pdf(args: typing.Tuple[str, bool]) -> str:
+    def _multiproc_intermediary_to_convert_folder_to_pdf(
+        args: typing.Tuple[str, bool]
+    ) -> str:
         return PdfUtils.convert_folder_to_pdf(args[0], args[1])
 
     @staticmethod
-    def convert_multiple_folders_to_pdf(folder_paths: typing.List[str], keep_original: bool = False) -> typing.List[str]:
-        print('Convertendo para pdf')
+    def convert_multiple_folders_to_pdf(
+        folder_paths: typing.List[str], keep_original: bool = False
+    ) -> typing.List[str]:
+        print("Convertendo para pdf")
         with multiprocessing.Pool() as pool:
-            inputs = list(zip(
-                folder_paths,
-                [keep_original] * len(folder_paths)
-            ))
+            inputs = list(zip(folder_paths, [keep_original] * len(folder_paths)))
             results = list(
                 tqdm.tqdm(
-                    pool.imap(PdfUtils._multiproc_intermediary_to_convert_folder_to_pdf, inputs),
+                    pool.imap(
+                        PdfUtils._multiproc_intermediary_to_convert_folder_to_pdf,
+                        inputs,
+                    ),
                     total=len(inputs),
-                    unit='Pdf',
+                    unit="Pdf",
                 )
             )
 
