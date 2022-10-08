@@ -1,0 +1,15 @@
+name: Run pre-commit
+
+on:
+  pull_request:
+    branches:
+      - master
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v3
+    - uses: pre-commit/action@v3.0.0
