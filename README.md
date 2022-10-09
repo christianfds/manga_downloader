@@ -9,6 +9,7 @@ These instructions will get you a copy of the project up and running on your loc
 ```
 git
 python3.9
+poetry
 ```
 ### Installing
 First of all you need to clone the repository:
@@ -17,9 +18,7 @@ git clone git@github.com:christianfds/manga_downloader.git
 ```
 Then install the dependencies in a virtual environment:
 ```bash
-python3.9 -m venv venv
-source venv/bin/activate
-pip install -r requirements.txt
+poetry install
 ```
 
 With this you are ready to download any manga available on the providers:
