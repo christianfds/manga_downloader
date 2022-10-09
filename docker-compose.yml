@@ -1,0 +1,12 @@
+version: '3.4'
+
+services:
+  cli:
+    image: manga-downloader-cli
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    volumes:
+      - ./data:/app/out
+    stdin_open: true
+    tty: true
