@@ -16,6 +16,11 @@ logger.addHandler(handler)
 
 
 def parse_chapter_selection(selection: str) -> list[int]:
+    """
+       Method to parse and dump the chapters based on the user input.
+       Args:
+           selection (str): Specify manga chapter.
+       """
     chapters = []
     for section in selection.split(","):
         section_range = section.split("-")
@@ -32,6 +37,14 @@ def parse_chapter_selection(selection: str) -> list[int]:
 
 
 def chose_manga(provider: MangaHost, manga_name: str):
+    """
+    Method to choose the manga to be downloaded.
+    Args:
+        provider (str): Specify manga host.
+        :param provider: MangaHost
+    Args:
+        manga_name (str): Specify manga name.
+    """
     chosen_manga = None
     for manga in provider.find_mangas(manga_name):
         manga.show()
@@ -52,10 +65,19 @@ def chose_manga(provider: MangaHost, manga_name: str):
 
 
 def select_chapters(provider: MangaHost, manga: Manga):
+    """
+    Method to select the chapters based on user input.
+    Args:
+        provider (str): Specify manga host.
+        :param provider: MangaHost
+    Args:
+        manga (str): Specify manga name.
+        :param manga: Manga
+    """
     chapters = provider.find_manga_chapters(manga)
 
     for index, elem in enumerate(chapters, 1):
-        print(("{} - Chapter #{}").format(dynamic_pad(len(chapters), index), elem))
+        print("{} - Chapter #{}".format(dynamic_pad(len(chapters), index), elem))
 
     response = input(FormatText.option("Which indexes to download?  "))
     selected_chapters = parse_chapter_selection(response)
@@ -63,6 +85,19 @@ def select_chapters(provider: MangaHost, manga: Manga):
 
 
 def download_chapters(provider: MangaHost, manga: Manga, selected_chapters, chapters):
+    """
+    Method to download chapters of Manga
+    Args:
+        provider (str): Specify manga host.
+        :param provider: MangaHost
+    Args:
+        manga (str): Specify manga name.
+        :param manga: Manga
+    Args:
+        selected_chapters (str): Specify chapters to be downloaded.
+    Args:
+        chapters (int): Specify manga chapters.
+    """
     all_folders = []
     for chapter in selected_chapters:
         folder, _ = provider.download_chapter(manga, chapters[chapter - 1])
@@ -71,11 +106,23 @@ def download_chapters(provider: MangaHost, manga: Manga, selected_chapters, chap
 
 
 def move_to_output(path: str, output: str):
+    """
+    Method to move the files to a different path.
+    Args:
+        path (str): Specify SRC path file to move the files.
+    Args:
+        output (str): Specify destination path to move the files.
+    """
     os.makedirs(output, exist_ok=True)
     shutil.move(path, output)
 
 
 def manga_downloader(args: dict):
+    """
+    Method to initiate the manga downloader.
+    Args:
+        args (dict): Specify the input data.
+    """
     clear_tmp()
 
     provider = MangaHost()
