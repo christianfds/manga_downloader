@@ -1,7 +1,7 @@
 import argparse
 import logging
-import shutil
 import os
+import shutil
 
 from manga_provider.mangahost import MangaHost
 from util.manga import Manga
