@@ -23,7 +23,7 @@ poetry install
 
 With this you are ready to download any manga available on the providers:
 ```bash
-python manga_downloader.py -m "One Piece" -o "./out/"
+poetry run python manga_downloader.py -m "One Piece" -o "./out/"
 ```
 
 ## Contributing
