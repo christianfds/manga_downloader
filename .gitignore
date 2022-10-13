@@ -140,3 +140,4 @@ cython_debug/
 .tmp/
 
 data
+.DS_Store
