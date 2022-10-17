@@ -2,6 +2,7 @@ import argparse
 import logging
 import os
 import shutil
+from typing import List
 
 from manga_provider.mangahost import MangaHost
 from util.manga import Manga
@@ -15,10 +16,17 @@ handler.setFormatter(formatter)
 logger.addHandler(handler)
 
 
+def validate_section_range(section_range: List[str]):
+    for section in section_range:
+        if not section.isdigit():
+            raise TypeError("Chapter selection has invalid type. Choices must be integer")
+
+
 def parse_chapter_selection(selection: str) -> list[int]:
     chapters = []
     for section in selection.split(","):
         section_range = section.split("-")
+        validate_section_range(section_range)
         if len(section_range) > 2:
             raise IndexError(f"Invalid range: {section}")
         elif len(section_range) == 2:
@@ -39,11 +47,8 @@ def chose_manga(provider: MangaHost, manga_name: str):
         while response not in ("Y", "N"):
             response = input(FormatText.option("Download this manga? Y/N  ")).upper()
 
-        if response == "N":
-            continue
-        elif response == "Y":
-            chosen_manga = manga
-            break
+        if response == "Y":
+            return manga
 
     if chosen_manga is None:
         print("Couldn't find this manga")
@@ -79,13 +84,14 @@ def manga_downloader(args: dict):
     clear_tmp()
 
     provider = MangaHost()
-
-    manga = chose_manga(provider, args.manga)
-
-    selected_chapters, chapters = select_chapters(provider, manga)
-
-    # TODO Run all operations below atomic for each chapter
-    all_folders = download_chapters(provider, manga, selected_chapters, chapters)
+    try:
+        manga = chose_manga(provider, args.manga)
+        selected_chapters, chapters = select_chapters(provider, manga)
+        # TODO Run all operations below atomic for each chapter
+        all_folders = download_chapters(provider, manga, selected_chapters, chapters)
+    except (TypeError, IndexError) as error:
+        print(error)
+        quit(1)
 
     if not args.image:
         result_pdfs = PdfUtils.convert_multiple_folders_to_pdf(all_folders)
