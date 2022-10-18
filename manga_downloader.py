@@ -15,11 +15,13 @@ formatter = logging.Formatter(logging.BASIC_FORMAT)
 handler.setFormatter(formatter)
 logger.addHandler(handler)
 
+SECTION_RANGE_ERROR_MSG = "Chapter selection has invalid type. Choices must be integer"
+
 
 def validate_section_range(section_range: List[str]):
     for section in section_range:
         if not section.isdigit():
-            raise TypeError("Chapter selection has invalid type. Choices must be integer")
+            raise TypeError(SECTION_RANGE_ERROR_MSG)
 
 
 def parse_chapter_selection(selection: str) -> list[int]:
