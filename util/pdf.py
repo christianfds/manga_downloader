@@ -9,6 +9,13 @@ from PIL import Image
 class PdfUtils:
     @staticmethod
     def convert_folder_to_pdf(folder_path: str, keep_original: bool = False) -> str:
+        """
+        Static Method to convert the pdf's.
+        Args:
+            folder_path (string): specify the folder path.
+        Args:
+            keep_original (bool): -> specify True to save the original files (default: False).
+        """
         files_list = None
         for root, _, files in os.walk(folder_path):
             files_list = [os.path.join(root, name) for name in files]
@@ -31,12 +38,22 @@ class PdfUtils:
 
     @staticmethod
     def _multiproc_intermediary_to_convert_folder_to_pdf(args: tuple[str, bool]) -> str:
+        """
+        Static method to initiate the pdf converts.
+        Args:
+            args tuple[str, bool]: default arguments.
+        """
         return PdfUtils.convert_folder_to_pdf(args[0], args[1])
 
     @staticmethod
-    def convert_multiple_folders_to_pdf(
-        folder_paths: list[str], keep_original: bool = False
-    ) -> list[str]:
+    def convert_multiple_folders_to_pdf(folder_paths: list[str], keep_original: bool = False) -> list[str]:
+        """
+        Static method to initiate the multiple converts of pdf's.
+        Args:
+            folder_paths (string): specify the folder path.
+        Args:
+            keep_original (bool): -> specify True to save the original files (default: False).
+        """
         print("Converting to PDF")
         with multiprocessing.Pool() as pool:
             inputs = list(zip(folder_paths, [keep_original] * len(folder_paths)))
