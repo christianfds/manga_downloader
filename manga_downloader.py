@@ -56,8 +56,11 @@ def select_chapters(provider: MangaHost, manga: Manga):
 
     for index, elem in enumerate(chapters, 1):
         print(("{} - Chapter #{}").format(dynamic_pad(len(chapters), index), elem))
-
-    response = input(FormatText.option("Which indexes to download?  "))
+    response = None
+    while response not in chapters:
+        response = input(FormatText.option("Which indexes to download?  "))
+        if response == "" or " ":
+            continue
     selected_chapters = parse_chapter_selection(response)
     return selected_chapters, chapters
 
