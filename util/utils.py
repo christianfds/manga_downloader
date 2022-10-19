@@ -5,6 +5,10 @@ from termcolor import colored
 
 class FormatText:
     @staticmethod
+    def id(text: str) -> str:
+        return colored(text=text, color="cyan", attrs=["bold"])
+
+    @staticmethod
     def title(text: str) -> str:
         return colored(text=text, color="red", attrs=["bold"])
 

@@ -1,6 +1,7 @@
 import argparse
 import logging
 import os
+import re
 import shutil
 from typing import List
 
@@ -41,21 +42,32 @@ def parse_chapter_selection(selection: str) -> list[int]:
     return chapters
 
 
-def chose_manga(provider: MangaHost, manga_name: str):
+def chose_manga(provider: MangaHost, manga_name: str, bulk_display: int = 5):
     chosen_manga = None
-    for manga in provider.find_mangas(manga_name):
+    manga_collection = {}
+    for counter, manga in enumerate(provider.find_mangas(manga_name)):
         manga.show()
+        manga_collection[manga.manga_id] = manga
         response = None
-        while response not in ("Y", "N"):
-            response = input(FormatText.option("Download this manga? Y/N  ")).upper()
-
-        if response == "Y":
-            return manga
+        if counter >= 1 and counter % bulk_display == 0:
+            while not response:
+                response = input(FormatText.option("Type manga id. Continue? C:  "))
+            if response == "C":
+                continue
+            else:
+                try:
+                    match_exists = re.match("^([-A-Za-z0-9])+$", response)
+                    if match_exists:
+                        chosen_manga = manga_collection[response]
+                        break
+                except KeyError:
+                    print("Chosen manga ID doesn't exist")
+                    quit(2)
 
     if chosen_manga is None:
         print("Couldn't find this manga")
         quit(0)
-    return manga
+    return chosen_manga
 
 
 def select_chapters(provider: MangaHost, manga: Manga):
