@@ -26,8 +26,7 @@ class Manga:
         self.manga_id = manga_id
 
     def show(self):
-        print(FormatText.id(self.manga_id))
-        print(FormatText.title(self.title))
+        print(f"{FormatText.id(self.manga_id)}: {FormatText.title(self.title)}")
         if self.alternative_title:
             print(FormatText.description(", ".join(self.alternative_title)))
         print(FormatText.description(self.description))

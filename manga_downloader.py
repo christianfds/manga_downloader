@@ -51,7 +51,9 @@ def chose_manga(provider: MangaHost, manga_name: str, bulk_display: int = 5):
         response = None
         if counter >= 1 and counter % bulk_display == 0:
             while not response:
-                response = input(FormatText.option("Type manga id. Continue? C:  "))
+                response = input(
+                    FormatText.option("Type the desired manga id or C to continue: ")
+                )
             if response == "C":
                 continue
             else:
