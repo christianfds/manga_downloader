@@ -23,12 +23,18 @@ class DownloadIssue(Exception):
 
 class MangaProvider(abc.ABC):
     def __init__(
-        self, base_url: str, find_path: str, manga_path: str, manga_chapter_path: str
+        self,
+        base_url: str,
+        find_path: str,
+        manga_path: str,
+        manga_chapter_path: str,
+        manga_link_regex: str,
     ) -> None:
         self.base_url = base_url
         self.find_path = find_path
         self.manga_path = manga_path
         self.manga_chapter_path = manga_chapter_path
+        self.manga_link_regex = manga_link_regex
 
     def perform_request(self, url: str) -> requests.Response:
         logger.debug(f"Sending request to {url}")
@@ -90,6 +96,7 @@ class MangaProvider(abc.ABC):
 
             # Open a local file with wb ( write binary ) permission.
             with open(file_path, "wb") as f:
+                print(type(r), r.raw, type(r.raw))
                 shutil.copyfileobj(r.raw, f)
 
             # Logging twice? but there is a single handler
