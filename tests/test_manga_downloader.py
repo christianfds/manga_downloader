@@ -43,6 +43,6 @@ class TestChoseManga:
         provider = MangaHost()
         assert provider.find_mangas("Some Manga") == manga_tuple
 
-        with patch("builtins.input", return_value=self.manga_id):
+        with patch("builtins.input", return_value="1"):
             chosen_manga = chose_manga(MangaHost(), "Some Manga", 1)
         assert chosen_manga == manga_tuple[0]
