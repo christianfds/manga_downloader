@@ -45,7 +45,7 @@ def chose_manga(provider: MangaHost, manga_name: str, bulk_display: int = 5):
     chosen_manga = None
     manga_collection = {}
     for counter, manga in enumerate(provider.find_mangas(manga_name)):
-        manga.show(counter)
+        manga.show(counter + 1)
         manga_collection[counter + 1] = manga
         response = None
         if counter >= 1 and counter % bulk_display == 0:
