@@ -30,9 +30,12 @@ class MangaProvider(abc.ABC):
         self.manga_path = manga_path
         self.manga_chapter_path = manga_chapter_path
 
-    def perform_request(self, url: str) -> requests.Response:
+    def perform_request(self, url: str, *args, **kwargs) -> requests.Response:
         logger.debug(f"Sending request to {url}")
-        response = requests.get(url, headers=self.get_headers())
+        timeout = kwargs.get("timeout", 5)
+        response = requests.get(
+            url, headers=self.get_headers(), timeout=timeout, *args, **kwargs
+        )
 
         logger.debug("Request result:")
         logger.debug(response)
@@ -81,8 +84,11 @@ class MangaProvider(abc.ABC):
 
         os.makedirs(save_path, exist_ok=True)
 
-        logging.debug(f"Downloading {uri}")
-        r = requests.get(uri, headers=self.get_headers(), stream=True)
+        try:
+            logging.debug(f"Downloading {uri}")
+            r = self.perform_request(uri, stream=True)
+        except requests.exceptions.ConnectionError as connection_error:
+            raise connection_error
 
         if r.status_code == 200:
             # Set decode_content value to True, otherwise the downloaded image file's size will be zero.
