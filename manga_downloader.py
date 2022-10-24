@@ -43,10 +43,10 @@ def parse_chapter_selection(selection: str) -> list[int]:
 
 def chose_manga(provider: MangaHost, manga_name: str, bulk_display: int = 5):
     chosen_manga = None
-    manga_collection = {}
+    manga_collection = []
     for counter, manga in enumerate(provider.find_mangas(manga_name)):
         manga.show(counter + 1)
-        manga_collection[counter + 1] = manga
+        manga_collection.append(manga)
         response = None
         if counter >= 1 and counter % bulk_display == 0:
             while not response:
@@ -61,9 +61,9 @@ def chose_manga(provider: MangaHost, manga_name: str, bulk_display: int = 5):
                 try:
                     if (
                         response.isdigit()
-                        and (int_response := int(response)) in manga_collection
+                        and (int_response := int(response)) < counter + 1
                     ):
-                        return manga_collection[int_response]
+                        return manga_collection[int_response - 1]
                 except KeyError:
                     print("Chosen manga ID doesn't exist")
                     quit(2)

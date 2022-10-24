@@ -31,14 +31,17 @@ class TestChoseManga:
     link = "some link"
     manga_id = "some-id"
 
-    @patch.object(MangaHost, "find_mangas", autospec=True)
-    def test_chose_manga(self, find_mangas):
-        manga_tuple = tuple(
+    @pytest.fixture
+    def manga_tuple(self):
+        return tuple(
             [
                 Manga(title=self.title, link=self.link, manga_id=self.manga_id),
                 Manga(title="a", link="b", manga_id="c"),
             ]
         )
+
+    @patch.object(MangaHost, "find_mangas", autospec=True)
+    def test_chose_manga(self, find_mangas, manga_tuple):
         find_mangas.return_value = manga_tuple
         provider = MangaHost()
         assert provider.find_mangas("Some Manga") == manga_tuple
@@ -46,3 +49,21 @@ class TestChoseManga:
         with patch("builtins.input", return_value="1"):
             chosen_manga = chose_manga(MangaHost(), "Some Manga", 1)
         assert chosen_manga == manga_tuple[0]
+
+    @pytest.mark.parametrize(
+        "manga_index_choice",
+        ["3", "-1"],
+    )
+    @patch.object(MangaHost, "find_mangas", autospec=True)
+    def test_chose_manga_not_in_list(
+        self, find_mangas, manga_index_choice, manga_tuple
+    ):
+        find_mangas.return_value = manga_tuple
+        provider = MangaHost()
+        assert provider.find_mangas("Some Manga") == manga_tuple
+
+        with pytest.raises(SystemExit) as system_exit_error:
+            with patch("builtins.input", return_value=manga_index_choice):
+                chosen_manga = chose_manga(MangaHost(), "Some Manga", 1)
+            assert chosen_manga == manga_tuple[0]
+        assert system_exit_error.value.code == 0
