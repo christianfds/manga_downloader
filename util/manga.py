@@ -30,3 +30,7 @@ class Manga:
         if self.alternative_title:
             print(FormatText.description(", ".join(self.alternative_title)))
         print(FormatText.description(self.description))
+
+    def show_compact_with_index(self, index):
+        title_with_index = "{}. {}".format(index + 1, self.title)
+        print(FormatText.title(title_with_index))

@@ -6,6 +6,7 @@ import shutil
 from manga_provider.mangahost import MangaHost
 from util.manga import Manga
 from util.pdf import PdfUtils
+from util.search_render import SearchRender
 from util.utils import FormatText, clear_tmp, dynamic_pad
 
 logger = logging.getLogger("manga_downloader")
@@ -32,23 +33,10 @@ def parse_chapter_selection(selection: str) -> list[int]:
 
 
 def chose_manga(provider: MangaHost, manga_name: str):
-    chosen_manga = None
-    for manga in provider.find_mangas(manga_name):
-        manga.show()
-        response = None
-        while response not in ("Y", "N"):
-            response = input(FormatText.option("Download this manga? Y/N  ")).upper()
-
-        if response == "N":
-            continue
-        elif response == "Y":
-            chosen_manga = manga
-            break
-
-    if chosen_manga is None:
+    sr = SearchRender(provider.find_mangas(manga_name))
+    if sr.search_query is None:
         print("Couldn't find this manga")
-        quit(0)
-    return manga
+    return sr.select()
 
 
 def select_chapters(provider: MangaHost, manga: Manga):
