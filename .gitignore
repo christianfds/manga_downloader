@@ -138,4 +138,6 @@ dmypy.json
 cython_debug/
 
 .tmp/
+data/
+.DS_Store
 .idea/
