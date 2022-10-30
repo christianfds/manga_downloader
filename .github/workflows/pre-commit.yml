@@ -4,6 +4,9 @@ on:
   pull_request:
     branches:
       - master
+  push:
+    branches:
+      - main
 
 jobs:
   lint:
@@ -13,3 +16,28 @@ jobs:
     - uses: actions/checkout@v2
     - uses: actions/setup-python@v3
     - uses: pre-commit/action@v3.0.0
+
+  cov:
+    name: Coverage of tests
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v2
+    - uses: actions/setup-python@v3
+    - name: Generate coverage report
+      run: |
+        pip install pytest
+        pip install coverage
+        pip install -r requirements.txt
+        coverage run -m pytest
+        coverage xml
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        token: ${{ secrets.CODECOV_TOKEN }}
+        directory: ./coverage/reports/
+        fail_ci_if_error: true
+        files: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        path_to_write_report: ./coverage/codecov_report.txt
+        verbose: true
