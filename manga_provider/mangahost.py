@@ -1,5 +1,6 @@
 import logging
 import os
+import re
 import typing
 
 from bs4 import BeautifulSoup
@@ -15,6 +16,7 @@ SETTINGS = {
     "find_path": "find",
     "manga_path": "manga",
     "manga_chapter_path": "manga",
+    "manga_link_regex": r"https://mangahost4.com/manga/\S+",
 }
 
 
@@ -62,18 +64,21 @@ class MangaHost(MangaProvider):
         for row in table.findAll("td"):
             if counter % 2:
                 manga_link = row.find("a")["href"]
-                mg = Manga(
-                    row.find("a")["title"],
-                    manga_link,
-                    alternative_title=[
-                        title for title in row.find("span").text.split(",") if title
-                    ],
-                    description=row.find("div", {"class": "entry-content"})
-                    .text.strip()
-                    .replace("\r\n", " "),
-                    manga_id=MangaHost.extract_manga_id(manga_link),
-                )
-                logger.debug(mg)
+                if re.match(self.manga_link_regex, manga_link):
+                    mg = Manga(
+                        row.find("a")["title"],
+                        manga_link,
+                        alternative_title=[
+                            title for title in row.find("span").text.split(",") if title
+                        ],
+                        description=row.find("div", {"class": "entry-content"})
+                        .text.strip()
+                        .replace("\r\n", " "),
+                        manga_id=MangaHost.extract_manga_id(manga_link),
+                    )
+                    logger.debug(mg)
+                else:
+                    print("Manga contains invalid link")
                 yield mg
 
             counter = counter + 1
