@@ -12,11 +12,11 @@ logger = logging.getLogger("manga_downloader.manga_provider.mangahost")
 
 
 SETTINGS = {
-    "base_url": "https://mangahost4.com",
+    "base_url": "https://mangahostz.com",
     "find_path": "find",
     "manga_path": "manga",
     "manga_chapter_path": "manga",
-    "manga_link_regex": r"https://mangahost4.com/manga/\S+",
+    "manga_link_regex": r"https://mangahostz.com/manga/\S+",
 }
 
 
@@ -55,8 +55,8 @@ class MangaHost(MangaProvider):
         manga_name = self.encode_manga_name(manga_name)
         search = "/".join([self.base_url, self.find_path, manga_name])
 
-        request_result = self.perform_request(search)
-        soup = BeautifulSoup(request_result.content, features="html.parser")
+        request_result = self.perform_request_html(search)
+        soup = BeautifulSoup(request_result, features="html.parser")
 
         table = soup.find("table")
 
@@ -86,8 +86,8 @@ class MangaHost(MangaProvider):
     def find_manga_chapters(self, manga: Manga) -> list[str]:
         search = "/".join([self.base_url, self.manga_path, manga.manga_id])
 
-        request_result = self.perform_request(search)
-        soup = BeautifulSoup(request_result.content, features="html.parser")
+        request_result = self.perform_request_html(search)
+        soup = BeautifulSoup(request_result, features="html.parser")
 
         chapters_element = soup.find("div", {"class": "chapters"})
         chapters = [
@@ -124,8 +124,8 @@ class MangaHost(MangaProvider):
             [self.base_url, self.manga_chapter_path, manga.manga_id, chapter]
         )
 
-        request_result = self.perform_request(search)
-        soup = BeautifulSoup(request_result.content, features="html.parser")
+        request_result = self.perform_request_html(search)
+        soup = BeautifulSoup(request_result, features="html.parser")
 
         imgs = soup.find("div", {"id": "slider"}).findAll("img")
         pages = [p["src"] for p in imgs]

@@ -9,7 +9,9 @@ import typing
 import requests
 import tqdm
 
+from util.docker import is_docker
 from util.manga import Manga
+from util.settings import CONFIG
 from util.utils import dynamic_pad
 
 # Fix issue when downloading a lot of chapters
@@ -18,6 +20,10 @@ logger = logging.getLogger("manga_downloader.manga_provider")
 
 
 class DownloadIssue(Exception):
+    pass
+
+
+class ForbiddenIssue(Exception):
     pass
 
 
@@ -36,16 +42,78 @@ class MangaProvider(abc.ABC):
         self.manga_chapter_path = manga_chapter_path
         self.manga_link_regex = manga_link_regex
 
-    def perform_request(self, url: str, *args, **kwargs) -> requests.Response:
-        logger.debug(f"Sending request to {url}")
-        timeout = kwargs.get("timeout", 5)
-        response = requests.get(
-            url, headers=self.get_headers(), timeout=timeout, *args, **kwargs
+    def perform_request_html(self, url: str, *args, **kwargs) -> str:
+        return (
+            self.perform_request(url, *args, **kwargs)
+            .content.decode()
+            .replace("\\", "")
         )
 
+    def perform_request(
+        self,
+        url: str,
+        timeout: int = 5,
+        ignore_flaresolverr: bool = False,
+        *args,
+        **kwargs,
+    ) -> str:
+        logger.debug(f"Sending request to {url}")
+
+        tries = 1
+        while True:
+            try:
+                # Uses FlareSolverr
+                if (
+                    is_docker() or CONFIG.get("flaresolverr_url")
+                ) and not ignore_flaresolverr:
+                    flaresolverr_url = "http://flaresolverr:8191"
+                    if CONFIG.get("flaresolverr_url"):
+                        flaresolverr_url = CONFIG.get("flaresolverr_url")
+
+                    payload = {
+                        "cmd": "request.get",
+                        "url": url,
+                        "headers": self.get_headers(),
+                    }
+                    logger.debug(
+                        f"Posting to flaresolverr at {flaresolverr_url} with payload: {payload}"
+                    )
+
+                    # Not using timeout when on flaresolverr since it might take some time
+                    request = requests.post(
+                        f"{flaresolverr_url}/v1", json=payload, allow_redirects=True
+                    )
+
+                    data = request.json()
+                    if data.get("status") == "error":
+                        raise ForbiddenIssue()
+                else:
+                    request = requests.get(
+                        url,
+                        allow_redirects=True,
+                        headers=self.get_headers(),
+                        timeout=timeout,
+                        *args,
+                        **kwargs,
+                    )
+
+                if request.status_code == 403:
+                    raise ForbiddenIssue()
+
+                break
+            except ForbiddenIssue:
+                logger.debug("Retrying...")
+                tries = tries + 1
+
+                if tries == 10:
+                    logger.warning(
+                        "Already tried 10 times, you might want to try again later"
+                    )
+
         logger.debug("Request result:")
-        logger.debug(response)
-        return response
+        logger.debug(request)
+
+        return request
 
     @abc.abstractclassmethod
     def get_headers(self) -> dict:
@@ -92,7 +160,7 @@ class MangaProvider(abc.ABC):
 
         try:
             logging.debug(f"Downloading {uri}")
-            r = self.perform_request(uri, stream=True)
+            r = self.perform_request(uri, stream=True, ignore_flaresolverr=True)
         except requests.exceptions.ConnectionError as connection_error:
             raise connection_error
 

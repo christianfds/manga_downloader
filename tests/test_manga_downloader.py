@@ -24,5 +24,5 @@ class TestGeneric:
     def test_connection_timeout(self):
         provider = MangaHost()
         with pytest.raises(exceptions.ConnectionError) as connection_error:
-            provider.perform_request(url="http://example.com:81")
+            provider.perform_request_html(url="http://example.com:81")
         assert connection_error.value

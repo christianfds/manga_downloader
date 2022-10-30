@@ -10,3 +10,12 @@ services:
       - ./data:/app/out
     stdin_open: true
     tty: true
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    environment:
+      - LOG_LEVEL=debug
+    ports:
+      - 8191:8191
+    restart: unless-stopped

@@ -139,5 +139,6 @@ cython_debug/
 
 .tmp/
 data/
+out/
 .DS_Store
 .idea/

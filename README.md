@@ -62,11 +62,15 @@ appuser@281f592323c4:/app$ python manga_downloader.py -m "One Piece" -o "./out/"
 Another alternative to run the CLI, is using Docker Compose, this make the things easy. And at this point, the only thing we need is run the following command:
 
 ```bash
+docker-compose up -d flaresolverr
 docker-compose run --rm cli
 
 ```
 
 It will build the docker image, run it and also creates a volume folder in app root, to save the download content in the folder `./out` in root of our application.
+
+### FlareSolverr
+Its possible to use [FlareSolverr](https://github.com/FlareSolverr/FlareSolverr) to solve most issues with cloudflare, the best way to do it is by using the Docker Compose, but if you want its possible to set the environment variable `FLARESOLVERR_URL`
 
 ## Contributing
 
